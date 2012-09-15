@@ -24,6 +24,11 @@ public class Program {
         this.functions.add("pow");
         this.functions.add("cotan");
         this.functions.add("tan");
+        this.functions.add("log");
+        this.functions.add("abs");
+        this.functions.add("ceil");
+        this.functions.add("floor");
+        this.functions.add("round");
         
         this.statements = new ArrayList<String>();
         this.statements.add("while");

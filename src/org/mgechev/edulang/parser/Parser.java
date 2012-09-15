@@ -17,19 +17,23 @@ import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Cotan;
 import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Pow;
 import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Sin;
 import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Tan;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Abs;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.And;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.BuiltInOperator;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Ceil;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Colon;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Comma;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Cos;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Division;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Equals;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Floor;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.GreaterThan;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.GreaterThanOrEqual;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.IsEqual;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.LeftParenthesis;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.LessThan;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.LessThanOrEqual;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Log;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Minus;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Modulus;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Multiplication;
@@ -39,6 +43,7 @@ import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Or;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Plus;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Quote;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.RightParenthesis;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Round;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Semicolons;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.UnaryMinus;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.UnaryPlus;
@@ -184,10 +189,10 @@ public class Parser {
         
         Stack<Symbol> stack = new Stack<Symbol>();
         ArrayList<Symbol> result = new ArrayList<Symbol>();
-        Symbol currentSym;
+        Symbol currentSym = null;
         
         while (!current.value().equals(statementEnd)) {
-            currentSym = this.convertToken(current, stack);
+            currentSym = this.convertToken(current, currentSym);
             if (this.isVar(current) || this.isNumber(current) || this.isBoolean(current)) {
                 result.add(currentSym);
             } else if (this.isFunction(current)) {
@@ -261,13 +266,12 @@ public class Parser {
         }
     }
     
-    private Symbol convertToken(Token token, Stack<Symbol> stack) {
+    private Symbol convertToken(Token token, Symbol lastSymbol) {
         if (this.isOperator(token)) {
-            if (stack.isEmpty()) {
+            if (lastSymbol == null) {
                 return this.getOperator((Operators)token.value(), true);
             } else {
-                Symbol peek = stack.peek();
-                if (this.symbolIsOperator(peek) && !(peek instanceof LeftParenthesis)) {
+                if (this.symbolIsOperator(lastSymbol) && !(lastSymbol instanceof RightParenthesis)) {
                     return this.getOperator((Operators)token.value(), true);
                 }
             }
@@ -376,6 +380,16 @@ public class Parser {
             return new Cotan();
         } else if (func.equals("pow")) {
             return new Pow();
+        } else if (func.equals("log")) {
+            return new Log();
+        } else if (func.equals("abs")) {
+            return new Abs();
+        } else if (func.equals("ceil")) {
+            return new Ceil();
+        } else if (func.equals("floor")) {
+            return new Floor();
+        } else if (func.equals("round")) {
+            return new Round();
         } else {//if (func.equals("read")) {
             return new Read();
         }
