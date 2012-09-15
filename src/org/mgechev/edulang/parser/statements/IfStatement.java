@@ -3,8 +3,8 @@ package org.mgechev.edulang.parser.statements;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.mgechev.edulang.parser.expressions.BooleanValue;
 import org.mgechev.edulang.parser.expressions.IExpression;
+import org.mgechev.edulang.parser.expressions.symbols.BooleanValue;
 
 public class IfStatement implements IStatement {
 

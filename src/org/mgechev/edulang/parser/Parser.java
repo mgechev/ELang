@@ -1,22 +1,49 @@
 package org.mgechev.edulang.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Stack;
 
 import org.mgechev.edulang.common.Operators;
 import org.mgechev.edulang.common.Program;
-import org.mgechev.edulang.parser.expressions.BooleanValue;
 import org.mgechev.edulang.parser.expressions.Expression;
 import org.mgechev.edulang.parser.expressions.IExpression;
-import org.mgechev.edulang.parser.expressions.NumberValue;
-import org.mgechev.edulang.parser.expressions.Operator;
-import org.mgechev.edulang.parser.expressions.StringValue;
-import org.mgechev.edulang.parser.expressions.Symbol;
-import org.mgechev.edulang.parser.expressions.Value;
-import org.mgechev.edulang.parser.expressions.Variable;
-import org.mgechev.edulang.parser.expressions.functions.Read;
-import org.mgechev.edulang.parser.expressions.functions.Print;
+import org.mgechev.edulang.parser.expressions.symbols.BooleanValue;
+import org.mgechev.edulang.parser.expressions.symbols.Evaluator;
+import org.mgechev.edulang.parser.expressions.symbols.NumberValue;
+import org.mgechev.edulang.parser.expressions.symbols.StringValue;
+import org.mgechev.edulang.parser.expressions.symbols.Symbol;
+import org.mgechev.edulang.parser.expressions.symbols.Variable;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Cotan;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Pow;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Sin;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Tan;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.And;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.BuiltInOperator;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Colon;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Comma;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Cos;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Division;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Equals;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.GreaterThan;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.GreaterThanOrEqual;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.IsEqual;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.LeftParenthesis;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.LessThan;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.LessThanOrEqual;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Minus;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Modulus;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Multiplication;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Not;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.NotEquals;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Or;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Plus;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Quote;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.RightParenthesis;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Semicolons;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.UnaryMinus;
+import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.UnaryPlus;
+import org.mgechev.edulang.parser.expressions.symbols.functions.Print;
+import org.mgechev.edulang.parser.expressions.symbols.functions.Read;
 import org.mgechev.edulang.parser.statements.*;
 import org.mgechev.edulang.tokens.*;
 
@@ -61,7 +88,7 @@ public class Parser {
     }
     
     private void parseStatement(ArrayList<IStatement> block) {
-        StatementToken statement = (StatementToken)this.tokens.get(currentToken);
+        KeyWordToken statement = (KeyWordToken)this.tokens.get(currentToken);
         if (statement.value().equals("while")) {
             this.parseWhile(block);
         } else if (statement.value().equals("if")) {
@@ -119,36 +146,16 @@ public class Parser {
     }
     
     private int getOperatorPriority(Symbol operator) {
-        Operators o = ((Operator)operator).getValue();
-        if (o == Operators.PLU || o == Operators.MIN || o == Operators.OR || o == Operators.AND) {
-            return 2;
-        } else {
-            return 3;
-        }
-    }
-    
-    private Symbol convertToken(Token token) {
-        Symbol result = null;
-        if (isVar(token)) {
-            String varName = (String)token.value();
-            if (Program.Get().variableExists(varName)) {
-                return new Variable(varName);
+        if (this.symbolIsOperator(operator)) {
+            if (operator instanceof Plus || operator instanceof Minus || operator instanceof Or || operator instanceof And) {
+                return 2;
             } else {
-                throw new RuntimeException("The variable " + varName + "is not declared.");
-            }
-        } else if (isNumber(token)) {
-            return new NumberValue(((NumberToken)token).value());
-        } else if (isBoolean(token)) {
-            return new BooleanValue(((BooleanToken)token).value());
-        } else if (isOperator(token)) {
-            return new Operator(((OperatorToken)token).value());
-        } else if (isFunction(token)) {
-            return new Read();
-        } else {
-            throw new RuntimeException("Unknown token.");
+                return 3;
+            }   
         }
+        return 4;
     }
-    
+       
     private IExpression parseExpression(Operators statementEnd) {
         Token current = this.tokens.get(currentToken);
         
@@ -180,47 +187,56 @@ public class Parser {
         Symbol currentSym;
         
         while (!current.value().equals(statementEnd)) {
-            currentSym = convertToken(current);
-            if (isVar(current) || isNumber(current) || isBoolean(current)) {
+            currentSym = this.convertToken(current, stack);
+            if (this.isVar(current) || this.isNumber(current) || this.isBoolean(current)) {
                 result.add(currentSym);
-            } else {
-                Operators op = ((OperatorToken)current).value();
-                if (!op.equals(Operators.OB) && !op.equals(Operators.CB)) {
-                    
-                    while (!stack.isEmpty() && !stack.peek().getValue().equals(Operators.OB) && this.getOperatorPriority(currentSym) <= this.getOperatorPriority(stack.peek())) {
-                        if (stack.peek().getValue().equals(Operators.OB)) {
-                            stack.pop();
-                        } else {
-                            result.add(stack.pop());
-                        }
+            } else if (this.isFunction(current)) {
+                stack.push(currentSym);
+            } else if (this.isComma(current)) {
+                while (!(stack.peek() instanceof LeftParenthesis)) {
+                    if (stack.isEmpty()) {
+                        throw new RuntimeException("Parenthesis error!");
                     }
-                    stack.push(currentSym);
-
-                } else if (op.equals(Operators.OB)) {
-                    stack.push(currentSym);                    
-                } else {
-                    while (!stack.peek().getValue().equals(Operators.OB)) {
-                        currentSym = stack.pop();
-                        result.add(currentSym);
+                    result.add(stack.pop());
+                }
+            } else if (this.isOperator(current) && !current.value().equals(Operators.OB) && !current.value().equals(Operators.CB)) {
+                while (!stack.isEmpty() && this.symbolIsOperator(stack.peek()) && !(stack.peek() instanceof LeftParenthesis) && this.getOperatorPriority(currentSym) <= this.getOperatorPriority(stack.peek())) {
+                    if (stack.peek() instanceof LeftParenthesis) {
+                        stack.pop();
+                    } else {
+                        result.add(stack.pop());
                     }
+                }
+                stack.push(currentSym);
+            } else if (currentSym instanceof LeftParenthesis) {
+                stack.push(currentSym);
+            } else if (currentSym instanceof RightParenthesis) {
+                while (!stack.isEmpty() && this.symbolIsOperator(stack.peek()) && !(stack.peek() instanceof LeftParenthesis)) {
+                    result.add(stack.pop());
+                }
+                if (!stack.isEmpty() && stack.peek() instanceof LeftParenthesis) {
                     stack.pop();
                 }
+                if (!stack.isEmpty() && stack.peek() instanceof Evaluator) {
+                    result.add(stack.pop());
+                }
             }
-
             currentToken += 1;
             current = this.tokens.get(currentToken);
         }
-        Operators op;
+        
+ /* 
+        Operators op; */
         while (!stack.empty()) {
-            op = (Operators)stack.peek().getValue();
-            if (!op.equals(Operators.OB) && !op.equals(Operators.CB)) {
+            //op = (Operators)stack.peek().getValue();
+            //if (!op.equals(Operators.OB) && !op.equals(Operators.CB)) {
                 result.add(stack.pop());
-            }
+            //}
         }
 
         return new Expression(result);
     }
-    
+       
     private void parseVar(ArrayList<IStatement> block) {
         Token current = this.tokens.get(currentToken);
         String name = ((VariableToken)current).value();
@@ -234,7 +250,7 @@ public class Parser {
             //Equal so we want to move to the next token
             currentToken++;
             current = this.tokens.get(currentToken);
-            if (isFunction(current)) {
+            if (isFunction(current) && current.value().equals("read")) {
                 block.add(new AssignmentStatement(new Variable(name, null), new Read()));
             } else {
                 IExpression expr = this.parseExpression(Operators.SCL);
@@ -245,31 +261,181 @@ public class Parser {
         }
     }
     
+    private Symbol convertToken(Token token, Stack<Symbol> stack) {
+        if (this.isOperator(token)) {
+            if (stack.isEmpty()) {
+                return this.getOperator((Operators)token.value(), true);
+            } else {
+                Symbol peek = stack.peek();
+                if (this.symbolIsOperator(peek) && !(peek instanceof RightParenthesis)) {
+                    return this.getOperator((Operators)token.value(), true);
+                }
+            }
+        }
+        return this.convertToken(token);
+    }
+    
+    private Symbol convertToken(Token token) {
+        Symbol result = null;
+        if (isVar(token)) {
+            String varName = (String)token.value();
+            if (Program.Get().variableExists(varName)) {
+                return new Variable(varName);
+            } else {
+                throw new RuntimeException("The variable " + varName + "is not declared.");
+            }
+        } else if (isNumber(token)) {
+            return new NumberValue(((NumberToken)token).value());
+        } else if (isBoolean(token)) {
+            return new BooleanValue(((BooleanToken)token).value());
+        } else if (isOperator(token)) {
+            return this.getOperator(((OperatorToken)token).value());
+        } else if (isFunction(token)) {
+            return this.getFunction((String)token.value());
+        } else {
+            throw new RuntimeException("Unknown token.");
+        }
+    }
+    
+    private Symbol getOperator(Operators operator) {
+        return this.getOperator(operator, false);
+    }
+    
+    private Symbol getOperator(Operators operator, boolean unary) {
+        switch (operator) {
+        case PLU:
+            if (unary) {
+                return new UnaryPlus();
+            } else {
+                return new Plus();    
+            }
+        case MIN:
+            if (unary) {
+                return new UnaryMinus();
+            } else {
+                return new Minus();
+            }
+        case OB:
+            return new LeftParenthesis();
+        case AND:
+            return new And();
+        case CB:
+            return new RightParenthesis();
+        case CLN:
+            return new Colon();
+        case CM:
+            return new Comma();
+        case DIV:
+            return new Division();
+        case EQ:
+            return new Equals();
+        case EQL:
+            return new IsEqual();
+        case GT:
+            return new GreaterThan();
+        case GTE:
+            return new GreaterThanOrEqual();
+        case LT:
+            return new LessThan();
+        case LTE:
+            return new LessThanOrEqual();
+        case MOD:
+            return new Modulus();
+        case MUL:
+            return new Multiplication();
+        case NEQ:
+            return new NotEquals();
+        case NOT:
+            return new Not();
+        case OR:
+            return new Or();
+        case QT:
+            return new Quote();
+        case SCL:
+            return new Semicolons();
+            default:
+                throw new RuntimeException("Unknown operator.");
+        }
+    }
+    
+    private boolean symbolIsOperator(Symbol symbol) {
+        if (symbol instanceof BuiltInOperator) {
+            return true;
+        }
+        return false;
+    }
+    
+    private Symbol getFunction(String func) {
+        if (func.equals("cos")) {
+            return new Cos();
+        } else if (func.equals("sin")) {
+            return new Sin();
+        } else if (func.equals("tan")) {
+            return new Tan();
+        } else if (func.equals("cotan")) {
+            return new Cotan();
+        } else if (func.equals("pow")) {
+            return new Pow();
+        } else {//if (func.equals("read")) {
+            return new Read();
+        }
+    }
+    
+    private boolean isComma(Token token) {
+        if (this.isOperator(token)) {
+            if (token.value().equals(Operators.CM)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     private boolean isOperator(Token token) {
-        return token.getClass().toString().indexOf("Operator") >= 0;
+        if (token instanceof  OperatorToken) {
+            return true;
+        }
+        return false;
     }
     
     private boolean isVar(Token token) {
-        return token.getClass().toString().indexOf("Variable") >= 0;
+        if (token instanceof VariableToken) {
+            return true;
+        }
+        return false;
     }
     
     private boolean isNumber(Token token) {
-        return token.getClass().toString().indexOf("Number") >= 0;
+        if (token instanceof NumberToken) {
+            return true;
+        }
+        return false;
     }
     
     private boolean isBoolean(Token token) {
-        return token.getClass().toString().indexOf("Boolean") >= 0;
+        if (token instanceof BooleanToken) {
+            return true;
+        }
+        return false;
     }
     
     private boolean isString(Token token) {
-        return token.getClass().toString().indexOf("String") >= 0;
+        if (token instanceof StringToken) {
+            return true;
+        }
+        return false;
     }
     
     private boolean isFunction(Token token) {
-        return token.getClass().toString().indexOf("Function") >= 0;
+        if (token instanceof FunctionToken) {
+            return true;
+        }
+        return false;
     }
     
     private boolean isStatement(Token token) {
-        return token.getClass().toString().indexOf("Statement") >= 0;
+        if (token instanceof KeyWordToken) {
+            return true;
+        }
+        return false;
     }
 }

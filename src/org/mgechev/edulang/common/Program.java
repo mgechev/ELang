@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.mgechev.edulang.parser.expressions.IExpression;
-import org.mgechev.edulang.parser.expressions.Value;
+import org.mgechev.edulang.parser.expressions.symbols.Value;
 
 public class Program {
 
@@ -21,6 +21,9 @@ public class Program {
         this.functions.add("read");
         this.functions.add("sin");
         this.functions.add("cos");
+        this.functions.add("pow");
+        this.functions.add("cotan");
+        this.functions.add("tan");
         
         this.statements = new ArrayList<String>();
         this.statements.add("while");

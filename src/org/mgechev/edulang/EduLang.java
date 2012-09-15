@@ -23,6 +23,7 @@ public class EduLang {
             while ((programLine = reader.readLine()) != null) {
                 program += programLine;
             }
+            reader.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -32,7 +33,7 @@ public class EduLang {
         program = currentProgram;
     }
     
-    public static void run() {
+    public static void execute() {
         Lexer l = new Lexer(program);
         ArrayList<Token> lst = l.lex();
         

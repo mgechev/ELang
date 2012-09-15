@@ -1,7 +1,7 @@
 package org.mgechev.edulang.parser.statements;
 
 import org.mgechev.edulang.parser.expressions.IExpression;
-import org.mgechev.edulang.parser.expressions.Variable;
+import org.mgechev.edulang.parser.expressions.symbols.Variable;
 
 public class AssignmentStatement implements IStatement {
 

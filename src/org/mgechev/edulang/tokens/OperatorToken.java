@@ -4,8 +4,6 @@ import org.mgechev.edulang.common.Operators;
 
 public class OperatorToken extends Token<Operators> {
 
-    private Operators operator;
-    
     public OperatorToken(String symbol) {
         this.value = this.getOperatorByString(symbol);
     }
@@ -49,6 +47,8 @@ public class OperatorToken extends Token<Operators> {
             return Operators.CB;
         } else if (symbol.equals("'")) {
             return Operators.QT;
+        } else if (symbol.equals(",")) {
+            return Operators.CM;
         } else {
             throw new RuntimeException("Unknow operator.");
         }

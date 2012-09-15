@@ -20,5 +20,6 @@ public enum Operators {
     NEQ,
     OB,
     CB,
-    QT
+    QT,
+    CM
 }

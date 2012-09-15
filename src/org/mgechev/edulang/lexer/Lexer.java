@@ -6,7 +6,7 @@ import org.mgechev.edulang.tokens.BooleanToken;
 import org.mgechev.edulang.tokens.FunctionToken;
 import org.mgechev.edulang.tokens.NumberToken;
 import org.mgechev.edulang.tokens.OperatorToken;
-import org.mgechev.edulang.tokens.StatementToken;
+import org.mgechev.edulang.tokens.KeyWordToken;
 import org.mgechev.edulang.tokens.StringToken;
 import org.mgechev.edulang.tokens.Token;
 import org.mgechev.edulang.tokens.VariableToken;
@@ -64,7 +64,7 @@ public class Lexer {
                     if (Program.Get().getFunctions().indexOf(currentSymbol) >= 0) {
                         currentToken = new FunctionToken(currentSymbol);
                     } else if (Program.Get().getStatements().indexOf(currentSymbol) >= 0) {
-                        currentToken = new StatementToken(currentSymbol);
+                        currentToken = new KeyWordToken(currentSymbol);
                     } else if (currentSymbol.matches("(true|false)")) {
                         currentToken = new BooleanToken(currentSymbol);
                     } else if (isOperator(currentSymbol)) {
@@ -72,7 +72,7 @@ public class Lexer {
                     } else {
                         currentToken = new VariableToken(currentSymbol);
                     }
-                } else if (this.isOperator(this.current().toString())) {
+                } else if (this.isQuote(this.current().toString())) {
                     Character op = this.current();
                     String operator = op.toString();
                     if (operator.equals("'")) {
@@ -84,16 +84,18 @@ public class Lexer {
                         }
                         this.next();
                         currentToken = new StringToken(str);
-                    } else {
-                        this.next();
-                        if (op == '<' || op == '>' || op == '=' || op == '/') {
-                            if (this.current() == '=') {
-                                operator += "=";     
-                                this.next();
-                            }
+                    }
+                } else if (this.isOperator(this.current().toString())) {
+                    Character op = this.current();
+                    String operator = op.toString();
+                    this.next();
+                    if (op == '<' || op == '>' || op == '=' || op == '/') {
+                        if (this.current() == '=') {
+                            operator += "=";     
+                            this.next();
                         }
-                        currentToken = new OperatorToken(operator);
-                    }                    
+                    }
+                    currentToken = new OperatorToken(operator);                    
                 } else {
                     throw new RuntimeException("Unknown token.");
                 }
@@ -113,8 +115,12 @@ public class Lexer {
         return arg.toString().matches("[a-zA-Z]");
     }
     
+    private boolean isQuote(String arg) {
+        return arg.equals("'");
+    }
+    
     private boolean isOperator(String arg) {
-        return arg.toString().matches("([-\\*\\+/\\^=)(;><:]|and|or|not|==|/=|')");
+        return arg.matches("([-\\*\\+/\\^=)(;><:]|and|or|not|==|/=|'|,)");
     }
     
     private boolean isWhiteSpace(Character arg) {

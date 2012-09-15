@@ -3,6 +3,11 @@ package org.mgechev.edulang.parser.expressions;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import org.mgechev.edulang.parser.expressions.symbols.Evaluator;
+import org.mgechev.edulang.parser.expressions.symbols.Symbol;
+import org.mgechev.edulang.parser.expressions.symbols.Value;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.BuiltInFunction;
+
 public class Expression implements IExpression {
 
     private ArrayList<Symbol> expression;
@@ -21,16 +26,27 @@ public class Expression implements IExpression {
         Value tempResult;
         while (i < exprSize) {
             current = this.expression.get(i);
-            if (!isOperator(current)) {
+            if (!isEvaluator(current)) {
                 stack.push(current);
-            } else {
-                temp = (IExpression)stack.pop();
-                if (stack.isEmpty()) {  //Prefix operator like -a
-                    tempResult = ((Operator)current).evaluate(temp);
+            } else {                
+                Evaluator currentEvaluator = (Evaluator)current;
+                if (currentEvaluator instanceof BuiltInFunction) {
+                    BuiltInFunction func = ((BuiltInFunction) currentEvaluator);
+                    int currentArg = 0;
+                    while (currentArg < func.getArgumentsCount()) {
+                        temp = (IExpression)stack.pop();
+                        func.setOperand(temp);
+                        currentArg += 1;
+                    }
                 } else {
-                    tempResult = ((Operator)current).evaluate((IExpression)stack.pop(), temp);
+                    temp = (IExpression)stack.pop();
+                    currentEvaluator.setOperand(temp);
+                    if (!stack.isEmpty()) {  //Prefix operator like -a
+                        temp = (IExpression)stack.pop();
+                        currentEvaluator.setOperand(temp);
+                    }
                 }
-                stack.push(tempResult);
+                stack.push(currentEvaluator.evaluate());
             }
             i += 1;
         }
@@ -38,11 +54,11 @@ public class Expression implements IExpression {
         return result;
     }
     
-    private boolean isOperator(Symbol sym) {
-        if (sym.getClass().toString().indexOf("Operator") >= 0) {
-            return true;
+    private boolean isEvaluator(Symbol sym) {
+        if (!(sym instanceof Evaluator)) {
+            return false;
         }
-        return false;
+        return true;
     }
     
 }
