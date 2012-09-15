@@ -267,7 +267,7 @@ public class Parser {
                 return this.getOperator((Operators)token.value(), true);
             } else {
                 Symbol peek = stack.peek();
-                if (this.symbolIsOperator(peek) && !(peek instanceof RightParenthesis)) {
+                if (this.symbolIsOperator(peek) && !(peek instanceof LeftParenthesis)) {
                     return this.getOperator((Operators)token.value(), true);
                 }
             }
