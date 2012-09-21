@@ -11,8 +11,8 @@ public class IsEqual extends BuiltInOperator {
     }
     
     public Value<Boolean> evaluate() {
-        Double arg1 = (Double)((IExpression) this.args.pop()).evaluate().getValue();
-        Double arg2 = (Double)((IExpression) this.args.pop()).evaluate().getValue();
-        return new BooleanValue(arg1 == arg2);
+        Object arg1 = (Object)((IExpression) this.args.pop()).evaluate().getValue();
+        Object arg2 = (Object)((IExpression) this.args.pop()).evaluate().getValue();
+        return new BooleanValue(arg1.equals(arg2));
     }
 }

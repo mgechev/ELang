@@ -222,7 +222,8 @@ public class Parser {
                 if (!stack.isEmpty() && stack.peek() instanceof LeftParenthesis) {
                     stack.pop();
                 }
-                if (!stack.isEmpty() && stack.peek() instanceof Evaluator) {
+                if (!stack.isEmpty() && stack.peek() instanceof Evaluator && 
+                        !(stack.peek() instanceof LeftParenthesis || stack.peek() instanceof RightParenthesis)) {
                     result.add(stack.pop());
                 }
             }
