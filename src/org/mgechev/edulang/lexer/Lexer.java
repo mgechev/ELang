@@ -120,7 +120,7 @@ public class Lexer {
     }
     
     private boolean isOperator(String arg) {
-        return arg.matches("([-\\*\\+/\\^=)(;><:]|and|or|not|==|/=|'|,)");
+        return arg.matches("([-\\*\\+/\\^=)(;><:]|and|or|not|==|/=|'|,|%)");
     }
     
     private boolean isWhiteSpace(Character arg) {

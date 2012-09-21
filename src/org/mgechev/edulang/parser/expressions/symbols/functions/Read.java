@@ -21,8 +21,6 @@ public class Read extends Symbol implements IExpression {
             InputStreamReader reader = new InputStreamReader(System.in);
             BufferedReader in = new BufferedReader(reader);
             String result = in.readLine();
-            in.close();
-            reader.close();
             return this.getParse(result);
         } catch (IOException e) {
             System.out.println(e.getMessage());

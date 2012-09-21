@@ -48,7 +48,9 @@ public class OperatorToken extends Token<Operators> {
         } else if (symbol.equals("'")) {
             return Operators.QT;
         } else if (symbol.equals(",")) {
-            return Operators.CM;
+            return Operators.CM; 
+        } else if (symbol.equals("%")) {
+            return Operators.MOD;
         } else {
             throw new RuntimeException("Unknow operator.");
         }
