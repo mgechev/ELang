@@ -39,7 +39,7 @@ public class Lexer {
     private String getString() {
         String var = "";
         
-        while (this.hasNext() && this.isAlphabet(this.current())) {
+        while (this.hasNext() && (this.isAlphabet(this.current()) || this.isNumber(this.current()))) {
             var += this.current();
             this.next();
         }
