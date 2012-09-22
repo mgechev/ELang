@@ -3,7 +3,6 @@ package org.mgechev.edulang.common;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.mgechev.edulang.parser.expressions.IExpression;
 import org.mgechev.edulang.parser.expressions.symbols.Value;
 
 public class Program {
@@ -35,14 +34,25 @@ public class Program {
         this.statements.add("endwhile");
         this.statements.add("if");
         this.statements.add("endif");
+        this.statements.add("def");
+        this.statements.add("enddef");
+        this.statements.add("return");
     }
     
     public ArrayList<String> getFunctions() {
         return this.functions;
     }
     
+    public boolean isFunction(String arg) {
+        return this.functions.indexOf(arg) >= 0;
+    }
+    
     public ArrayList<String> getStatements() {
         return this.statements;
+    }
+
+    public boolean isStatement(String arg) {
+        return this.statements.indexOf(arg) >= 0;
     }
     
     public static Program Get() {

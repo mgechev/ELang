@@ -39,7 +39,7 @@ public class Lexer {
     private String getString() {
         String var = "";
         
-        while (this.hasNext() && (this.isAlphabet(this.current()) || this.isNumber(this.current()))) {
+        while (this.hasNext() && this.validVarCharacter(this.current())) {
             var += this.current();
             this.next();
         }
@@ -59,11 +59,11 @@ public class Lexer {
                 currentToken = null;
                 if (this.isNumber(this.current())) {
                     currentToken = new NumberToken(this.getNumber());
-                } else if (this.isAlphabet(this.current())) {
+                } else if (this.isAlphabet(this.current()) || this.isUnderscore(this.current())) {
                     currentSymbol = this.getString();
-                    if (Program.Get().getFunctions().indexOf(currentSymbol) >= 0) {
+                    if (Program.Get().isFunction(currentSymbol)) {
                         currentToken = new FunctionToken(currentSymbol);
-                    } else if (Program.Get().getStatements().indexOf(currentSymbol) >= 0) {
+                    } else if (Program.Get().isStatement(currentSymbol)) {
                         currentToken = new KeyWordToken(currentSymbol);
                     } else if (currentSymbol.matches("(true|false)")) {
                         currentToken = new BooleanToken(currentSymbol);
@@ -112,7 +112,15 @@ public class Lexer {
     }
     
     private boolean isAlphabet(Character arg) {
-        return arg.toString().matches("[a-zA-Z]");
+        return arg.toString().matches("[a-zA-ZабвгдежзийклмнопрстуфхцчшщъьюяАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯ]");
+    }
+    
+    private boolean validVarCharacter(Character arg) {
+        return this.isAlphabet(arg) || this.isNumber(arg) || this.isUnderscore(arg);
+    }
+    
+    private boolean isUnderscore(Character arg) {
+        return arg.equals('_');
     }
     
     private boolean isQuote(String arg) {
