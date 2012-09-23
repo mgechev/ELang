@@ -2,9 +2,10 @@ package org.mgechev.edulang.parser.expressions.symbols.builtinoperators;
 
 import org.mgechev.edulang.parser.expressions.IExpression;
 import org.mgechev.edulang.parser.expressions.symbols.NumberValue;
+import org.mgechev.edulang.parser.expressions.symbols.Operator;
 import org.mgechev.edulang.parser.expressions.symbols.Value;
 
-public class Modulus extends BuiltInOperator {
+public class Modulus extends Operator {
     
     public Modulus() {
         super(2);

@@ -10,30 +10,33 @@ import org.mgechev.edulang.parser.expressions.IExpression;
 import org.mgechev.edulang.parser.expressions.symbols.BooleanValue;
 import org.mgechev.edulang.parser.expressions.symbols.Evaluator;
 import org.mgechev.edulang.parser.expressions.symbols.NumberValue;
+import org.mgechev.edulang.parser.expressions.symbols.Operator;
 import org.mgechev.edulang.parser.expressions.symbols.StringValue;
 import org.mgechev.edulang.parser.expressions.symbols.Symbol;
 import org.mgechev.edulang.parser.expressions.symbols.Variable;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Abs;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Ceil;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Cos;
 import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Cotan;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Floor;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Log;
 import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Pow;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Print;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Read;
+import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Round;
 import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Sin;
 import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.Tan;
-import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Abs;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.And;
-import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.BuiltInOperator;
-import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Ceil;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Colon;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Comma;
-import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Cos;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Division;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Equals;
-import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Floor;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.GreaterThan;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.GreaterThanOrEqual;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.IsEqual;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.LeftParenthesis;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.LessThan;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.LessThanOrEqual;
-import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Log;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Minus;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Modulus;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Multiplication;
@@ -43,12 +46,10 @@ import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Or;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Plus;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Quote;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.RightParenthesis;
-import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Round;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.Semicolons;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.UnaryMinus;
 import org.mgechev.edulang.parser.expressions.symbols.builtinoperators.UnaryPlus;
-import org.mgechev.edulang.parser.expressions.symbols.functions.Print;
-import org.mgechev.edulang.parser.expressions.symbols.functions.Read;
+import org.mgechev.edulang.parser.expressions.symbols.functions.CustomFunction;
 import org.mgechev.edulang.parser.statements.*;
 import org.mgechev.edulang.tokens.*;
 
@@ -98,7 +99,71 @@ public class Parser {
             this.parseWhile(block);
         } else if (statement.value().equals("if")) {
             this.parseIf(block);
+        } else if (statement.value().equals("def")) {
+            this.parseFunctionStatement();
         }
+    }
+    
+    private ArrayList<Variable> getFunctionArguments() {
+        ArrayList<Variable> funcArgs = new ArrayList<Variable>();
+        
+        Token current = this.tokens.get(currentToken);
+        
+        while (!current.value().equals(Operators.CB)) {
+            currentToken += 1;
+            current = this.tokens.get(currentToken);
+
+            if (current instanceof VariableToken) {
+                funcArgs.add(new Variable(current.value().toString()));
+            }
+        }
+        return funcArgs;
+    }
+    
+    private ArrayList<IStatement> getFunctionStatements() {
+        ArrayList<IStatement> statements = new ArrayList<IStatement>();
+        int tokensCount = this.tokens.size();
+        Token current = this.tokens.get(currentToken);
+        //Here I'm still on the closing parenthesis so the incrementation is first
+        while (currentToken < tokensCount && !current.value().equals("return")) {
+            currentToken += 1;
+            current = this.tokens.get(currentToken);
+            
+            this.parseBlockLine(statements);
+        }
+        return statements;
+    }
+    
+    private void parseFunctionStatement() {
+        currentToken += 1;
+        String name = this.tokens.get(currentToken).value().toString();
+        currentToken += 1;
+        Token current = this.tokens.get(currentToken);
+        if (!current.value().equals(Operators.OB)) {
+            throw new RuntimeException("The function is not defined currectly!");
+        }
+        
+        ArrayList<Variable> funcArgs = this.getFunctionArguments();
+        ArrayList<IStatement> statements = this.getFunctionStatements();
+
+        current = this.tokens.get(currentToken);
+        if (!current.value().equals("return")) {
+            throw new RuntimeException("The function is not defined correctly!");
+        }
+        //Incrementing because the current token is the return statement.
+        currentToken += 1;
+        
+        IExpression returnValue = this.parseExpression(Operators.SCL);
+        
+        CustomFunction function = new CustomFunction(funcArgs, statements, returnValue);
+        Program.Get().addFunction(name, function);
+        
+        currentToken += 2;
+        current = this.tokens.get(currentToken);
+        if (!current.value().equals(Operators.SCL)) {
+            throw new RuntimeException("After the end of the function definition you must set semicolons.");
+        }
+        
     }
     
     private void parseWhile(ArrayList<IStatement> block) {
@@ -282,13 +347,13 @@ public class Parser {
     
     private Symbol convertToken(Token token) {
         Symbol result = null;
-        if (isVar(token)) {
-            String varName = (String)token.value();
-            if (Program.Get().variableExists(varName)) {
-                return new Variable(varName);
-            } else {
-                throw new RuntimeException("The variable " + varName + "is not declared.");
-            }
+        String name = token.value().toString();
+        if (isVar(token) && !Program.Get().functionExists(name)) {
+        //    if (Program.Get().variableExists(varName)) {
+                return new Variable(name);
+        //    } else {
+        //        throw new RuntimeException("The variable " + varName + "is not declared.");
+        //    }
         } else if (isNumber(token)) {
             return new NumberValue(((NumberToken)token).value());
         } else if (isBoolean(token)) {
@@ -296,7 +361,7 @@ public class Parser {
         } else if (isOperator(token)) {
             return this.getOperator(((OperatorToken)token).value());
         } else if (isFunction(token)) {
-            return this.getFunction((String)token.value());
+            return this.getFunction(name);
         } else {
             throw new RuntimeException("Unknown token.");
         }
@@ -364,7 +429,7 @@ public class Parser {
     }
     
     private boolean symbolIsOperator(Symbol symbol) {
-        if (symbol instanceof BuiltInOperator) {
+        if (symbol instanceof Operator) {
             return true;
         }
         return false;
@@ -391,8 +456,10 @@ public class Parser {
             return new Floor();
         } else if (func.equals("round")) {
             return new Round();
-        } else {//if (func.equals("read")) {
+        } else if (func.equals("read")) {
             return new Read();
+        } else {
+            return Program.Get().getFunction(func);
         }
     }
     
@@ -413,7 +480,7 @@ public class Parser {
     }
     
     private boolean isVar(Token token) {
-        if (token instanceof VariableToken) {
+        if (token instanceof VariableToken && !Program.Get().functionExists(token.value().toString())) {
             return true;
         }
         return false;
@@ -441,7 +508,7 @@ public class Parser {
     }
     
     private boolean isFunction(Token token) {
-        if (token instanceof FunctionToken) {
+        if ((token instanceof FunctionToken) || Program.Get().functionExists(token.value().toString())) {
             return true;
         }
         return false;

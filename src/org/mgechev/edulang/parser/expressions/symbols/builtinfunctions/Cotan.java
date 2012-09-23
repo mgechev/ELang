@@ -1,10 +1,11 @@
 package org.mgechev.edulang.parser.expressions.symbols.builtinfunctions;
 
 import org.mgechev.edulang.parser.expressions.IExpression;
+import org.mgechev.edulang.parser.expressions.symbols.Function;
 import org.mgechev.edulang.parser.expressions.symbols.NumberValue;
 import org.mgechev.edulang.parser.expressions.symbols.Value;
 
-public class Cotan extends BuiltInFunction {
+public class Cotan extends Function {
     
     public Cotan() {
         super(1);

@@ -2,9 +2,10 @@ package org.mgechev.edulang.parser.expressions.symbols.builtinoperators;
 
 import org.mgechev.edulang.parser.expressions.IExpression;
 import org.mgechev.edulang.parser.expressions.symbols.BooleanValue;
+import org.mgechev.edulang.parser.expressions.symbols.Operator;
 import org.mgechev.edulang.parser.expressions.symbols.Value;
 
-public class LessThan extends BuiltInOperator {
+public class LessThan extends Operator {
     
     public LessThan() {
         super(2);

@@ -1,10 +1,11 @@
 package org.mgechev.edulang.parser.expressions.symbols.builtinfunctions;
 
 import org.mgechev.edulang.parser.expressions.IExpression;
+import org.mgechev.edulang.parser.expressions.symbols.Function;
 import org.mgechev.edulang.parser.expressions.symbols.NumberValue;
 import org.mgechev.edulang.parser.expressions.symbols.Value;
 
-public class Pow extends BuiltInFunction {
+public class Pow extends Function {
     
     public Pow() {
         super(2);

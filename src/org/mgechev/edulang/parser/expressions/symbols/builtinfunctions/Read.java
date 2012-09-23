@@ -1,4 +1,4 @@
-package org.mgechev.edulang.parser.expressions.symbols.functions;
+package org.mgechev.edulang.parser.expressions.symbols.builtinfunctions;
 
 import java.io.BufferedReader;
 import java.io.IOException;

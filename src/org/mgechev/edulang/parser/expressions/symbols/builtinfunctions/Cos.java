@@ -1,11 +1,11 @@
-package org.mgechev.edulang.parser.expressions.symbols.builtinoperators;
+package org.mgechev.edulang.parser.expressions.symbols.builtinfunctions;
 
 import org.mgechev.edulang.parser.expressions.IExpression;
+import org.mgechev.edulang.parser.expressions.symbols.Function;
 import org.mgechev.edulang.parser.expressions.symbols.NumberValue;
 import org.mgechev.edulang.parser.expressions.symbols.Value;
-import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.BuiltInFunction;
 
-public class Cos extends BuiltInFunction {
+public class Cos extends Function {
     
     public Cos() {
         super(1);

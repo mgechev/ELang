@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import org.mgechev.edulang.parser.expressions.symbols.Evaluator;
+import org.mgechev.edulang.parser.expressions.symbols.Function;
 import org.mgechev.edulang.parser.expressions.symbols.Symbol;
 import org.mgechev.edulang.parser.expressions.symbols.Value;
-import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.BuiltInFunction;
 
 public class Expression implements IExpression {
 
@@ -30,8 +30,8 @@ public class Expression implements IExpression {
                 stack.push(current);
             } else {                
                 Evaluator currentEvaluator = (Evaluator)current;
-                if (currentEvaluator instanceof BuiltInFunction) {
-                    BuiltInFunction func = ((BuiltInFunction) currentEvaluator);
+                if (currentEvaluator instanceof Function) {
+                    Function func = ((Function) currentEvaluator);
                     int currentArg = 0;
                     while (currentArg < func.getArgumentsCount()) {
                         temp = (IExpression)stack.pop();

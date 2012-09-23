@@ -1,4 +1,4 @@
-package org.mgechev.edulang.parser.expressions.symbols.functions;
+package org.mgechev.edulang.parser.expressions.symbols.builtinfunctions;
 
 import org.mgechev.edulang.parser.expressions.IExpression;
 import org.mgechev.edulang.parser.expressions.symbols.Value;

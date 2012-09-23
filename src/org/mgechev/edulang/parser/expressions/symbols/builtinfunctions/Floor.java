@@ -1,18 +1,18 @@
-package org.mgechev.edulang.parser.expressions.symbols.builtinoperators;
+package org.mgechev.edulang.parser.expressions.symbols.builtinfunctions;
 
 import org.mgechev.edulang.parser.expressions.IExpression;
+import org.mgechev.edulang.parser.expressions.symbols.Function;
 import org.mgechev.edulang.parser.expressions.symbols.NumberValue;
 import org.mgechev.edulang.parser.expressions.symbols.Value;
-import org.mgechev.edulang.parser.expressions.symbols.builtinfunctions.BuiltInFunction;
 
-public class Abs extends BuiltInFunction {
+public class Floor extends Function {
     
-    public Abs() {
+    public Floor() {
         super(1);
     }
     
     public Value<Double> evaluate() {
         Double arg1 = (Double)((IExpression) this.args.pop()).evaluate().getValue();
-        return new NumberValue(Math.abs(arg1));
+        return new NumberValue(Math.floor(arg1));
     }
 }
