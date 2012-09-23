@@ -46,8 +46,7 @@ Here is a sample program which can be used for finding factorial and the n-th nu
                 current = current + 1;
             endwhile;
             result = a1;
-        endif;
-        if n < 0:
+        else: 
             print 'here';
             result = 0;
         endif;
