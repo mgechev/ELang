@@ -190,7 +190,9 @@ public class Parser {
         Token current = this.tokens.get(currentToken);
         IExpression condition = null;
         ArrayList<IStatement> statements = new ArrayList<IStatement>();
+        ArrayList<IStatement> elseStatements = new ArrayList<IStatement>();
         boolean conditionParsed = false;
+        boolean parseElse = false;
         while (!current.value().equals("endif")) {
             currentToken += 1;
             current = this.tokens.get(currentToken);
@@ -201,10 +203,19 @@ public class Parser {
                 current = this.tokens.get(currentToken);
                 conditionParsed = true;
             }
-                
-            this.parseBlockLine(statements);
+            
+            if (current.value().equals("else")) {
+                currentToken += 2; //for the colons
+                parseElse = true;
+            }
+
+            if (parseElse) {
+                this.parseBlockLine(elseStatements);
+            } else {
+                this.parseBlockLine(statements);
+            }
         }
-        block.add(new IfStatement(condition, statements));
+        block.add(new IfStatement(condition, statements, elseStatements));
     }
     
     private void parseFunction(ArrayList<IStatement> block) {

@@ -10,8 +10,7 @@ def fibonacci(n)
             current = current + 1;
         endwhile;
         result = a1;
-    endif;
-    if n < 0:
+    else: 
         print 'here';
         result = 0;
     endif;
@@ -39,3 +38,4 @@ n = read;
 print 'The result for the number you entered for factorial is: ';
 print factorial(n);
 print '\n';
+

@@ -39,6 +39,7 @@ public class Program {
         this.statements.add("while");
         this.statements.add("endwhile");
         this.statements.add("if");
+        this.statements.add("else");
         this.statements.add("endif");
         this.statements.add("def");
         this.statements.add("enddef");
