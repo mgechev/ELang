@@ -11,7 +11,6 @@ def fibonacci(n)
         endwhile;
         result = a1;
     else: 
-        print 'here';
         result = 0;
     endif;
     return result;

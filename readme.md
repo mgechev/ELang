@@ -47,7 +47,6 @@ Here is a sample program which can be used for finding factorial and the n-th nu
             endwhile;
             result = a1;
         else: 
-            print 'here';
             result = 0;
         endif;
         return result;
@@ -74,7 +73,6 @@ Here is a sample program which can be used for finding factorial and the n-th nu
     print 'The result for the number you entered for factorial is: ';
     print factorial(n);
     print '\n';
-
 
 License
 --------
