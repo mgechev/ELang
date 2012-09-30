@@ -99,9 +99,16 @@ public class Parser {
             this.parseWhile(block);
         } else if (statement.value().equals("if")) {
             this.parseIf(block);
+        } else if (statement.value().equals("return")) {
+            this.parseReturn(block);
         } else if (statement.value().equals("def")) {
             this.parseFunctionStatement();
         }
+    }
+    
+    private void parseReturn(ArrayList<IStatement> block) {
+        currentToken += 1;
+        block.add(new ReturnStatement(this.parseExpression(Operators.SCL)));
     }
     
     private ArrayList<Variable> getFunctionArguments() {
@@ -125,7 +132,7 @@ public class Parser {
         int tokensCount = this.tokens.size();
         Token current = this.tokens.get(currentToken);
         //Here I'm still on the closing parenthesis so the incrementation is first
-        while (currentToken < tokensCount && !current.value().equals("return")) {
+        while (currentToken < tokensCount && !current.value().equals("enddef")) {
             currentToken += 1;
             current = this.tokens.get(currentToken);
             
@@ -137,6 +144,10 @@ public class Parser {
     private void parseFunctionStatement() {
         currentToken += 1;
         String name = this.tokens.get(currentToken).value().toString();
+        
+        CustomFunction function = new CustomFunction();
+        //Adding the function instantly because of the recursion
+        Program.Get().addFunction(name, function);
         currentToken += 1;
         Token current = this.tokens.get(currentToken);
         if (!current.value().equals(Operators.OB)) {
@@ -146,7 +157,9 @@ public class Parser {
         ArrayList<Variable> funcArgs = this.getFunctionArguments();
         ArrayList<IStatement> statements = this.getFunctionStatements();
 
-        current = this.tokens.get(currentToken);
+        function.setArguments(funcArgs);
+        function.setStatements(statements);
+      /*  current = this.tokens.get(currentToken);
         if (!current.value().equals("return")) {
             throw new RuntimeException("The function is not defined correctly!");
         }
@@ -154,11 +167,9 @@ public class Parser {
         currentToken += 1;
         
         IExpression returnValue = this.parseExpression(Operators.SCL);
+        */
         
-        CustomFunction function = new CustomFunction(funcArgs, statements, returnValue);
-        Program.Get().addFunction(name, function);
-        
-        currentToken += 2;
+        currentToken += 1;
         current = this.tokens.get(currentToken);
         if (!current.value().equals(Operators.SCL)) {
             throw new RuntimeException("After the end of the function definition you must set semicolons.");

@@ -3,7 +3,7 @@ package org.mgechev.edulang.parser.expressions.symbols;
 
 public abstract class Function extends Evaluator {
     
-    private int argsCount;
+    protected int argsCount;
     
     public Function(int argsCount) {
         this.argsCount = argsCount;
