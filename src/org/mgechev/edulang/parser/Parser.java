@@ -120,7 +120,7 @@ public class Parser {
             currentToken += 1;
             current = this.tokens.get(currentToken);
 
-            if (current instanceof VariableToken) {
+            if (current instanceof NameToken) {
                 funcArgs.add(new Variable(current.value().toString()));
             }
         }
@@ -332,7 +332,7 @@ public class Parser {
        
     private void parseVar(ArrayList<IStatement> block) {
         Token current = this.tokens.get(currentToken);
-        String name = ((VariableToken)current).value();
+        String name = ((NameToken)current).value();
         currentToken += 1;
         current = this.tokens.get(currentToken);
         if (isOperator(current)) {
@@ -495,14 +495,14 @@ public class Parser {
     }
     
     private boolean isOperator(Token token) {
-        if (token instanceof  OperatorToken) {
+        if (token instanceof OperatorToken) {
             return true;
         }
         return false;
     }
     
     private boolean isVar(Token token) {
-        if (token instanceof VariableToken && !Program.Get().functionExists(token.value().toString())) {
+        if (token instanceof NameToken && !Program.Get().functionExists(token.value().toString())) {
             return true;
         }
         return false;

@@ -9,7 +9,7 @@ import org.mgechev.edulang.tokens.OperatorToken;
 import org.mgechev.edulang.tokens.KeyWordToken;
 import org.mgechev.edulang.tokens.StringToken;
 import org.mgechev.edulang.tokens.Token;
-import org.mgechev.edulang.tokens.VariableToken;
+import org.mgechev.edulang.tokens.NameToken;
 
 public class Lexer {
 
@@ -70,7 +70,7 @@ public class Lexer {
                     } else if (isOperator(currentSymbol)) {
                         currentToken = new OperatorToken(currentSymbol);
                     } else {
-                        currentToken = new VariableToken(currentSymbol);
+                        currentToken = new NameToken(currentSymbol);
                     }
                 } else if (this.isQuote(this.current().toString())) {
                     Character op = this.current();
