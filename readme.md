@@ -1,11 +1,11 @@
-EduLang
+ELang
 =======
 
-EduLang is a simple programming language written in Java. It is with dynamical and strongly typed imperative language.
+ELang is a simple programming language written in Java. It is with dynamical and strongly typed imperative language.
 
 It's originally created for educating myself in better understanding the programming languages.
 Anyway it's easy syntax could be used for educational purposes - teaching beginner programmers.
-In it's current version EduLang includes:
+In it's current version ELang includes:
 
   * Arithmetical expressions
   * Boolean expressions
@@ -32,7 +32,7 @@ Example
 -------
 Here is a sample program which can be used for finding factorial and the n-th number of Fibonacci:
 
-### EduLang
+### ELang
 
     def fibonacci(n)
         if n >= 0:
