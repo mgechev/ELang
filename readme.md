@@ -1,7 +1,7 @@
 ELang
 =======
 
-ELang is a simple programming language written in Java. It is with dynamical and strongly typed imperative language.
+ELang is a simple programming language written in Java. It is dynamical and strongly typed imperative language.
 
 It's originally created for educating myself in better understanding the programming languages.
 Anyway it's easy syntax could be used for educational purposes - teaching beginner programmers.
