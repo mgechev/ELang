@@ -37,4 +37,3 @@ n = read;
 print 'The result for the number you entered for factorial is: ';
 print factorial(n);
 print '\n';
-
