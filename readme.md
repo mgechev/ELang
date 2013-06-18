@@ -52,13 +52,6 @@ Here is a sample program which can be used for finding factorial and the n-th nu
         return result;
     enddef;
 
-    def recursiveFibonacci(n)
-        if n >= 0:
-            return fibonacci(n - 1) + fibonacci(n - 2);
-        endif;
-        return 0;
-    enddef;
-
     def factorial(n)
         result = 1;
         current = 1;
@@ -73,12 +66,6 @@ Here is a sample program which can be used for finding factorial and the n-th nu
     n = read;
     print 'The result for the fibonacci number entered is: ';
     print fibonacci(n);
-    print '\n';
-
-    print 'Enter n for fibonacci number: ';
-    n = read;
-    print 'The result for the fibonacci number using the recursive fibonacci function is: ';
-    print recursiveFibonacci(n);
     print '\n';
 
     print 'Enter n for factorial: ';
