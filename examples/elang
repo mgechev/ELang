@@ -3,5 +3,5 @@
 if [ -c $1 ]; then
     echo "Provide *.el filename."
 else
-    java -jar edulang.jar $1
+    java -jar elang.jar $1
 fi

@@ -10,7 +10,7 @@ import org.mgechev.edulang.lexer.Lexer;
 import org.mgechev.edulang.parser.Parser;
 import org.mgechev.edulang.tokens.Token;
 
-public class EduLang {
+public class ELang {
     
     private static String program = "";
     
