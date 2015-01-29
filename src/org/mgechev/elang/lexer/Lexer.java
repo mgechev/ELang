@@ -112,7 +112,7 @@ public class Lexer {
     }
     
     private boolean isAlphabet(Character arg) {
-        return arg.toString().matches("[a-zA-ZабвгдежзийклмнопрстуфхцчшщъьюяАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯ]");
+        return arg.toString().matches("[a-zA-Z]");
     }
     
     private boolean validVarCharacter(Character arg) {
