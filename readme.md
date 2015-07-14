@@ -26,8 +26,6 @@ In it's current version ELang includes:
     * round
     * log
 
-At the moment there are few limitations. May be the biggest once are the single return statement and the lack of else.
-
 Example
 -------
 Here is a sample program which can be used for finding factorial and the n-th number of Fibonacci:
@@ -46,7 +44,7 @@ Here is a sample program which can be used for finding factorial and the n-th nu
                 current = current + 1;
             endwhile;
             result = a1;
-        else: 
+        else:
             result = 0;
         endif;
         return result;

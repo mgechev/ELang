@@ -46,10 +46,6 @@ public class Program {
         this.statements.add("return");
     }
     
-    public ArrayList<String> getFunctions() {
-        return this.functions;
-    }
-    
     public boolean isFunction(String arg) {
         return this.functions.indexOf(arg) >= 0;
     }

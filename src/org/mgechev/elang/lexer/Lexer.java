@@ -110,11 +110,11 @@ public class Lexer {
     private boolean isNumber(Character arg) {
         return arg.toString().matches("[0-9]");
     }
-    
+
     private boolean isAlphabet(Character arg) {
         return arg.toString().matches("[a-zA-Z]");
     }
-    
+
     private boolean validVarCharacter(Character arg) {
         return this.isAlphabet(arg) || this.isNumber(arg) || this.isUnderscore(arg);
     }
